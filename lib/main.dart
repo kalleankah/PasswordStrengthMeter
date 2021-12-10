@@ -44,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
           children: <Widget>[
             Text('Enter a safe password', style: Theme.of(context).textTheme.headline4),
             const Spacer(),
-            PasswordStrengthMeter(password: password),
+            PasswordStrengthMeter(password: password,),
             TextField(
               onChanged: (String newVal) {
                 setState(() {
