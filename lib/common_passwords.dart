@@ -1,8 +1,8 @@
 import 'dart:convert';
 
 class CommonPasswords {
-  static List<String> get({int first = pwdString.length}){
-    return const LineSplitter().convert(pwdString).sublist(0, first);
+  static List<String> get(){
+    return const LineSplitter().convert(pwdString);
   }
 }
 
