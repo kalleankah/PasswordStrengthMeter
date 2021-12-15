@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'common_passwords.dart';
 
 class PasswordStrengthMeter extends StatelessWidget {
-  PasswordStrengthMeter({Key? key, required String password, CrackingMachine machine = CrackingMachine.desktop, CrackingCase crackingCase = CrackingCase.onAverage}) : super(key: key)
+  PasswordStrengthMeter({Key? key, required String? password, CrackingMachine machine = CrackingMachine.desktop, CrackingCase crackingCase = CrackingCase.onAverage}) : super(key: key)
   {
     secondsToCrack = calculateTimeToCrack(password, machine.hashRate, crackingCase.factor);
     calculateSecurityScore(secondsToCrack);
@@ -14,8 +14,8 @@ class PasswordStrengthMeter extends StatelessWidget {
   late final String message;
   late final Color color;
 
-  BigInt calculateTimeToCrack(String password, int power, int crackingCaseFactor) {
-    if (password.length < 4) {
+  BigInt calculateTimeToCrack(String? password, int power, int crackingCaseFactor) {
+    if (password == null || password.length < 4) {
       return BigInt.from(0);
     }
 
@@ -58,8 +58,8 @@ class PasswordStrengthMeter extends StatelessWidget {
       score = 1.0;
       color = Colors.deepPurple;
       seconds > BigInt.from(Duration.secondsPerDay * 365 * 100)
-        ? message = ">100 years"
-        : message = "${seconds ~/ BigInt.from(Duration.secondsPerDay * 365)} years";
+          ? message = ">100 years"
+          : message = "${seconds ~/ BigInt.from(Duration.secondsPerDay * 365)} years";
     }
     else if(seconds >= BigInt.from(Duration.secondsPerDay * 30)) {
       color = Colors.green;
@@ -94,21 +94,21 @@ class PasswordStrengthMeter extends StatelessWidget {
       padding: const EdgeInsets.all(8.0),
       height: 60,
       child: Stack(
-        children: <Widget>[
-          ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: LinearProgressIndicator(
-              backgroundColor: Colors.black12,
-              minHeight: 60,
-              color: color,
-              value: score,
+          children: <Widget>[
+            ClipRRect(
+              borderRadius: BorderRadius.circular(6),
+              child: LinearProgressIndicator(
+                backgroundColor: Colors.black12,
+                minHeight: 60,
+                color: color,
+                value: score,
+              ),
             ),
-          ),
-          Center(
-            child: Text(message,
-                style: Theme.of(context).textTheme.headline5),
-          ),
-        ]
+            Center(
+              child: Text(message,
+                  style: Theme.of(context).textTheme.headline5),
+            ),
+          ]
       ),
     );
   }
