@@ -3,12 +3,21 @@ import 'package:flutter/material.dart';
 
 class PasswordStrengthMeter extends StatelessWidget {
   ///A bar that indicates password strength as the time it takes to crack for the specified type of machine.
-  PasswordStrengthMeter({Key? key, required String? password, CrackingMachine machine = CrackingMachine.desktop, CrackingCase crackingCase = CrackingCase.onAverage, List<String>? passwordList, int? numPasswords}) : super(key: key)
-  {
-    List<String> list = (passwordList != null && passwordList.isNotEmpty) ? passwordList : commonPasswordsDefaultList;
-    commonPasswords = list.sublist(0, min(numPasswords,list.length));
+  PasswordStrengthMeter(
+      {Key? key,
+      required String? password,
+      CrackingMachine machine = CrackingMachine.desktop,
+      CrackingCase crackingCase = CrackingCase.onAverage,
+      List<String>? passwordList,
+      int? numPasswords})
+      : super(key: key) {
+    List<String> list = (passwordList != null && passwordList.isNotEmpty)
+        ? passwordList
+        : commonPasswordsDefaultList;
+    commonPasswords = list.sublist(0, min(numPasswords, list.length));
 
-    secondsToCrack = calculateTimeToCrack(password, machine.hashRate, crackingCase.factor);
+    secondsToCrack =
+        calculateTimeToCrack(password, machine.hashRate, crackingCase.factor);
     calculateSecurityScore(secondsToCrack);
   }
 
@@ -18,13 +27,14 @@ class PasswordStrengthMeter extends StatelessWidget {
   late final String message;
   late final Color color;
 
-  int min(int? a, int b){
-    if(a == null) return b;
-    if(a < b) return a;
+  int min(int? a, int b) {
+    if (a == null) return b;
+    if (a < b) return a;
     return b;
   }
 
-  BigInt calculateTimeToCrack(String? password, int power, int crackingCaseFactor) {
+  BigInt calculateTimeToCrack(
+      String? password, int power, int crackingCaseFactor) {
     if (password == null || password.length < 5) {
       return BigInt.from(0);
     }
@@ -63,35 +73,33 @@ class PasswordStrengthMeter extends StatelessWidget {
     return seconds;
   }
 
-  void calculateSecurityScore(BigInt seconds){
-    if(seconds >= BigInt.from(Duration.secondsPerDay * 365)) {
+  void calculateSecurityScore(BigInt seconds) {
+    if (seconds >= BigInt.from(Duration.secondsPerDay * 365)) {
       score = 1.0;
       color = Colors.deepPurple;
       seconds > BigInt.from(Duration.secondsPerDay * 365 * 100)
           ? message = ">100 years"
-          : message = "${seconds ~/ BigInt.from(Duration.secondsPerDay * 365)} years";
-    }
-    else if(seconds >= BigInt.from(Duration.secondsPerDay * 30)) {
+          : message =
+              "${seconds ~/ BigInt.from(Duration.secondsPerDay * 365)} years";
+    } else if (seconds >= BigInt.from(Duration.secondsPerDay * 30)) {
       color = Colors.green;
       score = 0.75 + 0.25 * seconds.toDouble() / (60.0 * 60.0 * 24.0 * 365.0);
       message = "${seconds ~/ BigInt.from(Duration.secondsPerDay * 30)} months";
-    }
-    else if(seconds >= BigInt.from(Duration.secondsPerDay)) {
+    } else if (seconds >= BigInt.from(Duration.secondsPerDay)) {
       score = 0.5 + 0.25 * seconds.toDouble() / (60.0 * 60.0 * 24.0 * 30.0);
-      color = Color.lerp(Colors.yellow, Colors.green, score / 0.75 ) ?? Colors.black;
+      color =
+          Color.lerp(Colors.yellow, Colors.green, score / 0.75) ?? Colors.black;
       message = "${seconds ~/ BigInt.from(Duration.secondsPerDay)} days";
-    }
-    else if(seconds >= BigInt.from(Duration.secondsPerHour)) {
+    } else if (seconds >= BigInt.from(Duration.secondsPerHour)) {
       score = 0.25 + 0.25 * seconds.toDouble() / (60.0 * 60.0 * 24.0);
-      color = Color.lerp(Colors.orange, Colors.yellow, score * 2) ?? Colors.black;
+      color =
+          Color.lerp(Colors.orange, Colors.yellow, score * 2) ?? Colors.black;
       message = "${seconds ~/ BigInt.from(Duration.secondsPerHour)} hours";
-    }
-    else if(seconds >= BigInt.from(Duration.secondsPerMinute)) {
+    } else if (seconds >= BigInt.from(Duration.secondsPerMinute)) {
       score = 0.125 + 0.125 * seconds.toDouble() / (60.0 * 60.0);
       color = Color.lerp(Colors.red, Colors.orange, score * 4) ?? Colors.black;
       message = "${seconds ~/ BigInt.from(Duration.secondsPerMinute)} minutes";
-    }
-    else {
+    } else {
       score = 0.125 * seconds.toDouble() / 60.0;
       color = Color.lerp(Colors.black, Colors.red, score * 8) ?? Colors.black;
       message = "$seconds seconds";
@@ -103,23 +111,20 @@ class PasswordStrengthMeter extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8.0),
       height: 60,
-      child: Stack(
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.circular(6),
-              child: LinearProgressIndicator(
-                backgroundColor: Colors.black12,
-                minHeight: 60,
-                color: color,
-                value: score,
-              ),
-            ),
-            Center(
-              child: Text(message,
-                  style: Theme.of(context).textTheme.headline5),
-            ),
-          ]
-      ),
+      child: Stack(children: <Widget>[
+        ClipRRect(
+          borderRadius: BorderRadius.circular(6),
+          child: LinearProgressIndicator(
+            backgroundColor: Colors.black12,
+            minHeight: 60,
+            color: color,
+            value: score,
+          ),
+        ),
+        Center(
+          child: Text(message, style: Theme.of(context).textTheme.headline5),
+        ),
+      ]),
     );
   }
 }
